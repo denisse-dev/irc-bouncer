@@ -18,23 +18,8 @@ resource "aws_instance" "irc_bouncer" {
   key_name = aws_key_pair.bouncer_key.key_name
   associate_public_ip_address = true
 
-  provisioner "file" {
-    source      = "bouncer.sh"
-    destination = "/tmp/bouncer.sh"
-
-    connection {
-      type     = "ssh"
-      user     = "ec2-user"
-      private_key = file("~/.ssh/id_rsa")
-      host     = self.public_ip
-    }
-  }
-
   provisioner "remote-exec" {
-    inline = [
-      "chmod u+x /tmp/bouncer.sh",
-      "/tmp/bouncer.sh",
-    ]
+    script = "bouncer.sh"
 
     connection {
       type     = "ssh"
