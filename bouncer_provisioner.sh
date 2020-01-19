@@ -9,7 +9,7 @@ User=znc"
 function install_packages() {
     sudo yum update -y
     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y
-    sudo yum install znc znc-devel tor torsocks emacs firewalld tmux curl -y
+    sudo yum install znc znc-devel tor torsocks emacs firewalld tmux curl deltarpm -y
     sudo yum group install "Development Tools" -y
 }
 
@@ -39,16 +39,13 @@ function configure_proxychains() {
 }
 
 function configure_timezone() {
-    echo 'ZONE="America/Mexico_City"' | sudo tee -a /etc/sysconfig/clock
+    echo 'ZONE="America/Chicago"' | sudo tee -a /etc/sysconfig/clock
     sudo ln -sf /usr/share/zoneinfo/America/Mexico_City /etc/localtime
 }
 
 function configure_firewall() {
     sudo firewall-cmd --permanent --add-service=ssh
-    sudo firewall-cmd --permanent --add-service=http
-    sudo firewall-cmd --permanent --add-service=https
     sudo firewall-cmd --permanent --add-port=6697/tcp
-    sudo firewall-cmd --permanent --add-port=8001/tcp
     sudo firewall-cmd --reload
     sudo systemctl start firewalld
     sudo systemctl enable firewalld

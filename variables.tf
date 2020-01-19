@@ -7,9 +7,9 @@ variable "profile" {
 }
 
 variable "ami_id" {
-  default = "ami-062f7200baf2fa504"
+  default = "ami-02f95b8ef454e31b9"
 }
 
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
