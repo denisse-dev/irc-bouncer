@@ -7,7 +7,7 @@ variable "profile" {
 }
 
 variable "ami_id" {
-  default = "ami-02f95b8ef454e31b9"
+  type = string
 }
 
 variable "instance_type" {

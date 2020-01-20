@@ -2,7 +2,7 @@
 
 ![banner](banner.png)
 
-# ZNC IRC bouncer with Tor
+# Hardened ZNC IRC bouncer with Tor
 
 ![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)
 ![forthebadge](https://forthebadge.com/images/badges/made-with-crayons.svg)
@@ -10,8 +10,8 @@
 
 ## About:
 
-This repository creates a ZNC IRC Bouncer that uses Tor to connect to IRC networks like Freenode or OFTC.
-Much of the information used to automate the creation of the IRC bouncer was taken from the amazing Tom Busby's article [Setting Up a ZNC IRC Bouncer to Use Tor](https://tom.busby.ninja/setting-up-znc-IRC-bouncer-to-use-tor/).
+This repository creates a Hardened ZNC IRC Bouncer that uses Tor to connect to IRC networks like Freenode or OFTC.
+Some of the information used to automate the creation of the IRC bouncer was taken from the amazing Tom Busby's article [Setting Up a ZNC IRC Bouncer to Use Tor](https://tom.busby.ninja/setting-up-znc-IRC-bouncer-to-use-tor/).
 
 **ZNC**: [ZNC](https://wiki.znc.in/ZNC) is an advanced [IRC bouncer](http://en.wikipedia.org/wiki/BNC_%28software%29#IRC) that is left connected so an IRC client can disconnect/reconnect without losing the chat session. The configuration used in this repository allows multiple clients to connect to the ZNC server.
 
@@ -34,13 +34,32 @@ Much of the information used to automate the creation of the IRC bouncer was tak
 1. Configure the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html).
 2. Install `packer` and `terraform` (ex. `pacman -S packer terraform`).
 3. Create the AMI `packer build`.
-4. Update the `variables.tf` file with the AMI-ID of the Machine you've just created.
+
+   **Note**: The **TOTP** for SSH configuration is executed during the hardening provisioner of `packer build`, you'll see some lines like this:
+
+   ```bash
+   ZNC IRC Bouncer: Do you want authentication tokens to be time-based (y/n) Warning: pasting the following URL into your browser exposes the OTP secret to Google:
+    ZNC IRC Bouncer:   https://www.google.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/bouncie@ip-172-31-38-69.ec2.internal%3Fsecret%3DDYDTZEOXL2J3QIDIRHSRHFLNEI%26issuer%3Dip-172-31-38-69.ec2.internal
+    ZNC IRC Bouncer: Your new secret key is: DYDTZEOXL2J3QIDIRHSRHFLNEI
+    ZNC IRC Bouncer: Your verification code is 450150
+    ZNC IRC Bouncer: Your emergency scratch codes are:
+    ZNC IRC Bouncer:   76788027
+    ZNC IRC Bouncer:   81328705
+    ZNC IRC Bouncer:   80540821
+    ZNC IRC Bouncer:   37103827
+    ZNC IRC Bouncer:   66794067
+   ```
+
+   Make sure to store the emergency scracth codes in a safe place and add the OTP secret to your 2FA application, I suggest using [Authy](https://authy.com/) for this.
+
+   If you don't do this you won't be able to SSH into the instance.
+4. Export the `TF_VAR_ami_id` environment variable with the AMI-ID of the Machine you've just created (ex. `export TF_VAR_ami_id=<ami id>`).
 5. Run `terraform apply`.
 6. Once it has been deployed continue to the configuration section.
 
-## Configuration:
+## Configuration (WIP):
 
-WIP.
+1. Upon first login you should set up a password for the `bouncie` user.
 
 ## Next steps:
 
