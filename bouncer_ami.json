@@ -54,7 +54,8 @@
         "sudo /tmp/user.sh",
         "sudo /tmp/packages.sh",
         "sudo /tmp/hardening.sh",
-        "rm .ssh/authorized_keys ; sudo rm /root/.ssh/authorized_keys"
+        "systemctl status sshd",
+        "sudo firewall-cmd --list-services"
       ]
     }
   ]

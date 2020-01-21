@@ -9,7 +9,7 @@ User=znc"
 function install_packages() {
     yum update -y > /dev/null
     yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y > /dev/null
-    yum install znc znc-devel tor torsocks emacs-nox firewalld tmux curl deltarpm google-authenticator qrencode -y > /dev/null
+    yum install znc znc-devel tor torsocks emacs-nox firewalld tmux curl deltarpm google-authenticator qrencode iproute -y > /dev/null
     yum group install "Development Tools" -y > /dev/null
 }
 
