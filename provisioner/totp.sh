@@ -6,8 +6,8 @@ SSHD_CONFIG=(
     'ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes'
 )
 PAM_CONFIG=(
-    "s/${DISABLE_PASSWORD}/${GOOGLE_AUTHENTICATOR}\n#${DISABLE_PASSWORD}/g"
-    's/#auth     required  pam_securetty.so/auth      required  pam_securetty.so/g'
+    "${DISABLE_PASSWORD}/${GOOGLE_AUTHENTICATOR}\n#${DISABLE_PASSWORD}"
+    '#auth     required  pam_securetty.so/auth      required  pam_securetty.so'
 )
 
 function sedIterator() {

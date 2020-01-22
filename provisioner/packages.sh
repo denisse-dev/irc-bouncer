@@ -1,6 +1,9 @@
 #!/bin/bash
 
 PROXYCHAINS_VER=4.14
+PROXYCHAINS_URL=https://github.com/rofl0r/proxychains-ng/archive/v${PROXYCHAINS_VER}.zip
+ZNC_CLIENTBUFFER_URL=https://github.com/CyberShadow/znc-clientbuffer/archive/master.zip
+PROXYCHAINS_HASH='261c26ae942f3f70d0e058ebc9b7e862062a0357fb96483908a8ef925698b4d76c5e1231f7fc3c51c9c6a16bb5831054e9fef72da68f47cb3ed0c80ebc1fc6cb  proxychains-ng.zip'
 ZNC_OVERRIDE="[Service]
 ExecStart=
 ExecStart=/usr/local/bin/proxychains4 /usr/bin/znc -f
@@ -9,15 +12,17 @@ User=znc"
 function install_packages() {
     yum update -y > /dev/null
     yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y > /dev/null
-    yum install znc znc-devel tor torsocks emacs-nox firewalld tmux curl deltarpm google-authenticator qrencode iproute -y > /dev/null
+    yum install znc znc-devel tor torsocks emacs-nox firewalld tmux curl deltarpm google-authenticator qrencode iproute fail2ban -y > /dev/null
     yum group install "Development Tools" -y > /dev/null
 }
 
 function install_proxychains() {
-    local URL=https://github.com/rofl0r/proxychains-ng/archive/v${PROXYCHAINS_VER}.zip
     local FILE=proxychains-ng.zip
     local DIR=proxychains-ng
-    curl -L0k "$URL" -o "$FILE" > /dev/null
+    curl -L0k "$PROXYCHAINS_URL" -o "$FILE" > /dev/null
+    if [[ "$PROXYCHAINS_HASH" != "$(sha512sum $FILE)" ]]; then
+        exit 1
+    fi
     unzip "$FILE" > /dev/null
     cd proxychains-ng-${PROXYCHAINS_VER} || return
     ./configure > /dev/null
@@ -44,10 +49,9 @@ function configure_timezone() {
 }
 
 function install_znc_clientbuffer() {
-    local URL=https://github.com/CyberShadow/znc-clientbuffer/archive/master.zip
     local FILE=znc-clientbuffer.zip
     local DIR=znc-clientbuffer-master
-    curl -L0k "$URL" -o "$FILE" > /dev/null
+    curl -L0k "$ZNC_CLIENTBUFFER_URL" -o "$FILE" > /dev/null
     unzip "$FILE"
     cd "$DIR" || return
     znc-buildmod clientbuffer.cpp > /dev/null

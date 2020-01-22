@@ -48,12 +48,24 @@
       "destination": "/tmp/hardening.sh"
     },
     {
+      "type":        "file",
+      "source":      "provisioner/totp.sh",
+      "destination": "/tmp/totp.sh"
+    },
+    {
+      "type":        "file",
+      "source":      "provisioner/banner",
+      "destination": "/tmp/banner"
+    },
+    {
       "type": "shell",
       "inline": [
-        "sudo chmod u+x /tmp/user.sh /tmp/packages.sh /tmp/hardening.sh",
+        "sudo chmod +x /tmp/user.sh /tmp/packages.sh /tmp/hardening.sh /tmp/totp.sh",
         "sudo /tmp/user.sh",
         "sudo /tmp/packages.sh",
         "sudo /tmp/hardening.sh",
+        "sudo mv /tmp/banner /etc/ssh/banner",
+        "sudo cp /tmp/totp.sh /home/bouncie/totp.sh",
         "systemctl status sshd",
         "sudo firewall-cmd --list-services"
       ]
