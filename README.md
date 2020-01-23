@@ -29,37 +29,31 @@ Some of the information used to automate the creation of the IRC bouncer was tak
 
 ---
 
+## Features:
+
+The Packer image creates a hardened Amazon Linux 2 AMI that has the following features:
+
+1. Hardened SSH.
+2. Enable the Firewall.
+3. Configure Fail2ban.
+4. Disable the `root` user.
+
+For more information about what has been done read the [hardening script](provisioner/hardening.sh).
+
 ## Usage:
 
 1. Configure the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html).
 2. Install `packer` and `terraform` (ex. `pacman -S packer terraform`).
-3. Create the AMI `packer build`.
-
-   **Note**: The **TOTP** for SSH configuration is executed during the hardening provisioner of `packer build`, you'll see some lines like this:
-
-   ```bash
-   ZNC IRC Bouncer: Do you want authentication tokens to be time-based (y/n) Warning: pasting the following URL into your browser exposes the OTP secret to Google:
-   ZNC IRC Bouncer:   https://www.google.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/bouncie@ip-172-31-38-69.ec2.internal%3Fsecret%3DDYDTZEOXL2J3QIDIRHSRHFLNEI%26issuer%3Dip-172-31-38-69.ec2.internal
-   ZNC IRC Bouncer: Your new secret key is: DYDTZEOXL2J3QIDIRHSRHFLNEI
-   ZNC IRC Bouncer: Your verification code is 450150
-   ZNC IRC Bouncer: Your emergency scratch codes are:
-   ZNC IRC Bouncer:   76788027
-   ZNC IRC Bouncer:   81328705
-   ZNC IRC Bouncer:   80540821
-   ZNC IRC Bouncer:   37103827
-   ZNC IRC Bouncer:   66794067
-   ```
-
-   Make sure to store the emergency scracth codes in a safe place and add the OTP secret to your 2FA application, I suggest using [Authy](https://authy.com/) for this.
-
-   If you don't do this you won't be able to SSH into the instance.
-4. Export the `TF_VAR_ami_id` environment variable with the AMI-ID of the Machine you've just created (ex. `export TF_VAR_ami_id=<ami id>`).
+3. Create the AMI with `packer build`.
+4. Export the `TF_VAR_ami_id` environment variable with the AMI-ID of the Machine you've just created (ex. `export TF_VAR_ami_id=<ami id>`) or enter the AMI ID during step 5.
 5. Run `terraform apply`.
 6. Once it has been deployed continue to the configuration section.
 
 ## Configuration (WIP):
 
-1. Upon first login you should set up a password for the `bouncie` user.
+1. Connect to the instance `ssh bouncie@<instance IP> -p 45632`
+2. Upon first login you should set up a password for the `bouncie` user, you'll be disconnected after setting up the password.
+3. Connect to the instance again, enable two-step authentication by running the [TOTP script](provisioner/totp.sh) to enable *Time-based One-Time* passwords to SSH into the instance.
 
 ## Next steps:
 

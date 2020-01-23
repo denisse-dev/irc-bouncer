@@ -67,7 +67,8 @@
         "sudo mv /tmp/banner /etc/ssh/banner",
         "sudo cp /tmp/totp.sh /home/bouncie/totp.sh",
         "systemctl status sshd",
-        "sudo firewall-cmd --list-services"
+        "sudo firewall-cmd --list-services",
+        "rm .ssh/authorized_keys ; sudo rm /root/.ssh/authorized_keys"
       ]
     }
   ]

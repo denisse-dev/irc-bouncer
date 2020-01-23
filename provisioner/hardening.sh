@@ -40,6 +40,15 @@ ReadWritePaths=-/var/lib/fail2ban
 ReadWritePaths=-/var/log/fail2ban
 ReadWritePaths=-/var/spool/postfix/maildrop
 CapabilityBoundingSet=CAP_AUDIT_READ CAP_DAC_READ_SEARCH'
+FAIL2BAN_CONFIG_SSHD='[ssh]
+
+enabled  = true
+port     = 45632
+filter   = sshd
+logpath  = /var/log/auth.log
+findtime = 1d
+bantime  = 2w
+maxretry = 3'
 
 function configure_sshd() {
     for i in "${SSHD_CONFIG_REPLACE[@]}"; do
@@ -62,15 +71,6 @@ function configure_firewall() {
 
 function configure_fail2ban() {
     local FAIL2BAN_JAIL='/etc/fail2ban/jail.local'
-    local FAIL2BAN_CONFIG_SSHD='[ssh]
-
-enabled  = true
-port     = 45632
-filter   = sshd
-logpath  = /var/log/auth.log
-findtime = 1d
-bantime  = 2w
-maxretry = 3'
     cp /etc/fail2ban/jail.conf "$FAIL2BAN_JAIL"
     for i in "${FAIL2BAN_CONFIG_REPLACE[@]}"; do
         sed -i 's/'"$i"'/g' "$FAIL2BAN_JAIL"
@@ -89,3 +89,5 @@ function disable_root_user() {
 
 configure_sshd
 configure_firewall
+configure_fail2ban
+disable_root_user
