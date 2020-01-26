@@ -1,31 +1,17 @@
 #!/bin/bash
 
-GOOGLE_AUTHENTICATOR='auth     required  pam_google_authenticator.so'
-DISABLE_PASSWORD='auth      include   system-remote-login'
-SSHD_CONFIG=(
-    'ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes'
-)
-PAM_CONFIG=(
-    "${DISABLE_PASSWORD}/${GOOGLE_AUTHENTICATOR}\n#${DISABLE_PASSWORD}"
-    '#auth     required  pam_securetty.so/auth      required  pam_securetty.so'
-)
-
-function sedIterator() {
-    local LOCATION="$1"
-    shift
-    local CONFIG=("$@")
-    for i in "${CONFIG[@]}";
-    do
-        sed -i 's/'"$i"'/g' "$LOCATION"
-    done
-}
+SSH_CONFIG='/etc/ssh/sshd_config'
+PAM_SSH='/etc/pam.d/sshd'
 
 function enable_totp() {
-    sedIterator "/etc/pam.d/sshd" "${PAM_CONFIG[@]}"
-    sedIterator "/etc/ssh/sshd_config" "${SSHD_CONFIG[@]}"
-    echo 'Authentication Methods publickey,keyboard-interactive:pam' >> /etc/ssh/sshd_config
+    sed -i 's/AuthenticationMethods publickey/AuthenticationMethods publickey keyboard-interactive:pam/g' "$SSH_CONFIG"
+    sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' "$SSH_CONFIG"
+    echo "UsePAM yes" >> "$SSH_CONFIG"
+    echo -e "auth required pam_google_authenticator.so\n$(cat /etc/pam.d/sshd)" > "$PAM_SSH"
+    sed -i 's/auth      include   system-remote-login/#auth      include   system-remote-login/g' "$PAM_SSH"
     systemctl reload sshd
     systemctl restart sshd
+    google-authenticator
 }
 
 enable_totp
