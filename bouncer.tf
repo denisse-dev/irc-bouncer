@@ -12,36 +12,30 @@ resource "aws_security_group" "bouncer_security_group" {
   description = "Allow the ZNC IRC Bouncer to communicate"
 
   ingress {
-    from_port   = 6697
-    to_port     = 6697
+    from_port   = var.irc_port
+    to_port     = var.irc_port
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.security_group_cidr_blocks]
   }
 
   ingress {
-    from_port   = 45632
-    to_port     = 45632
+    from_port   = var.ssh_port
+    to_port     = var.ssh_port
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.security_group_cidr_blocks]
   }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.security_group_cidr_blocks]
   }
-}
-
-resource "aws_key_pair" "bouncer_key" {
-  key_name   = "bouncer_key"
-  public_key = file("~/.ssh/id_rsa.pub")
 }
 
 resource "aws_instance" "irc_bouncer" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  key_name                    = aws_key_pair.bouncer_key.key_name
   associate_public_ip_address = true
   security_groups = [
     aws_security_group.bouncer_security_group.name

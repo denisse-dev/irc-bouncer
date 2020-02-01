@@ -1,7 +1,8 @@
 ---
-- name: Ensure a the user bouncie is created with sudo access
+- name: Ensure the user bouncie is created with sudo access
   hosts: localhost
   become: yes
+  user: ec2-user
   tasks:
     - name: Create the bouncie user
       user:
@@ -15,6 +16,7 @@
 - name: Ensure my public keys are added to the bouncie user
   hosts: localhost
   become: yes
+  user: ec2-user
   tasks:
     - name: Create the SSH directory on bouncie's home folder
       authorized_key:
@@ -25,6 +27,7 @@
 - name: Ensure the bouncie user will set up a password on first login
   hosts: localhost
   become: yes
+  user: ec2-user
   tasks:
     - name: Disable bouncie's password and expire it
       shell:

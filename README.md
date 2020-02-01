@@ -51,8 +51,55 @@ For more information about what has been done read the [hardening script](provis
 
 ## Configuration (WIP):
 
-1. Connect to the instance `ssh bouncie@<instance IP> -p 45632`
-2. Upon first login you should set up a password for the `bouncie` user, you'll be disconnected after setting up the password.
+1. Connect to the instance `ssh bouncie@<redacted> -p 45632`, you'll see the following:
+
+```
+The authenticity of host '[<redacted>]:45632 ([<redacted>]:45632)' can't be established.
+ED25519 key fingerprint is SHA256:Y/kl0Jtlog/xYXkGl4g4oN46M6uti8q43HkWa06/9lo.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[<redacted>]:45632' (ED25519) to the list of known hosts.
+ .           ..         .           .       .           .           .
+      .         .            .          .       .
+            .         ..xxxxxxxxxx....               .       .             .
+    .             MWMWMWWMWMWMWMWMWMWMWMWMW                       .
+              IIIIMWMWMWMWMWMWMWMWMWMWMWMWMWMttii:        .           .
+ .      IIYVVXMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWxx...         .           .
+     IWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMx..
+   IIWMWMWMWMWMWMWMWMWBY%ZACH%AND%OWENMWMWMWMWMWMWMWMWMWMWMWMWMx..        .
+    ""MWMWMWMWMWM"""""""".  .:..   ."""""MWMWMWMWMWMWMWMWMWMWMWMWMWti.
+ .     ""   . `  .: . :. : .  . :.  .  . . .  """"MWMWMWMWMWMWMWMWMWMWMWMWMti=
+        . .   :` . :   .  .'.' '....xxxxx...,'. '   ' ."""YWMWMWMWMWMWMWMWMWMW+
+     ; . ` .  . : . .' :  . ..XXXXXXXXXXXXXXXXXXXXx.    `     . "YWMWMWMWMWMWMW
+.    .  .  .    . .   .  ..XXXXXXXXWWWWWWWWWWWWWWWWXXXX.  .     .     """""""
+        ' :  : . : .  ...XXXXXWWW"   W88N88@888888WWWWWXX.   .   .       . .
+   . ' .    . :   ...XXXXXXWWW"    M88N88GGGGGG888^8M "WMBX.          .   ..  :
+         :     ..XXXXXXXXWWW"     M88888WWRWWWMW8oo88M   WWMX.     .    :    .
+           "XXXXXXXXXXXXWW"       WN8888WWWWW  W8@@@8M    BMBRX.         .  : :
+  .       XXXXXXXX=MMWW":  .      W8N888WWWWWWWW88888W      XRBRXX.  .       .
+     ....  ""XXXXXMM::::. .        W8@889WWWWWM8@8N8W      . . :RRXx.    .
+         ``...'''  MMM::.:.  .      W888N89999888@8W      . . ::::"RXV    .  :
+ .       ..'''''      MMMm::.  .      WW888N88888WW     .  . mmMMMMMRXx
+      ..' .            ""MMmm .  .       WWWWWWW   . :. :,miMM"""  : ""`    .
+   .                .       ""MMMMmm . .  .  .   ._,mMMMM"""  :  ' .  :
+               .                  ""MMMMMMMMMMMMM""" .  : . '   .        .
+          .              .     .    .                      .         .
+.                                         .          .         .
+You are required to change your password immediately (root enforced)
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+No packages needed for security; 1 packages available
+Run "sudo yum update" to apply all updates.
+WARNING: Your password has expired.
+You must change your password now and login again!
+Changing password for user bouncie.
+New password:
+```
+
+Upon first login you're required to set up a password for the `bouncie` user, you'll be disconnected after setting up the password.
 3. Connect to the instance again, enable two-step authentication by running the [TOTP script](provisioner/totp.sh) to enable *Time-based One-Time* passwords to SSH into the instance.
 
 ## Next steps:

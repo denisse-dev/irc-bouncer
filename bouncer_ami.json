@@ -34,16 +34,6 @@
   "provisioners": [
     {
       "type":        "file",
-      "source":      "provisioner/user.sh",
-      "destination": "/tmp/user.sh"
-    },
-    {
-      "type":        "file",
-      "source":      "provisioner/packages.sh",
-      "destination": "/tmp/packages.sh"
-    },
-    {
-      "type":        "file",
       "source":      "provisioner/hardening.sh",
       "destination": "/tmp/hardening.sh"
     },
@@ -56,6 +46,16 @@
       "type":        "file",
       "source":      "provisioner/banner",
       "destination": "/tmp/banner"
+    },
+    {
+      "type": "ansible",
+      "playbook_file": "./provisioner/user.yml",
+      "extra_arguments": [ "--become" ]
+    },
+    {
+      "type": "ansible",
+      "playbook_file": "./provisioner/packages.yml",
+      "extra_arguments": [ "--become" ]
     },
     {
       "type": "shell",
