@@ -1,9 +1,9 @@
 ---
-- name: Ensure the 'bouncie' user is created
+- name: Ensure the 'bouncie' user is created and configured
   hosts: localhost
   become: yes
   tasks:
-    - name: Create the 'bouncie' user
+    - name: Ensure the 'bouncie' user is created
       user:
         name: bouncie
         shell: /bin/bash

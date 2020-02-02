@@ -1,0 +1,32 @@
+#	$OpenBSD: sshd_config,v 1.100 2016/08/15 12:32:04 naddy Exp $
+Port 45632
+HostKey /etc/ssh/ssh_host_ed25519_key
+SyslogFacility AUTHPRIV
+LogLevel VERBOSE
+PermitRootLogin no
+MaxAuthTries 3
+AuthorizedKeysFile .ssh/authorized_keys
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+GSSAPIAuthentication yes
+GSSAPICleanupCredentials no
+UsePAM yes
+X11Forwarding no
+ClientAliveInterval 300
+ClientAliveCountMax 2
+AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+AcceptEnv XMODIFIERS
+Subsystem sftp  /usr/libexec/openssh/sftp-server
+AuthorizedKeysCommand /opt/aws/bin/eic_run_authorized_keys %u %f
+AuthorizedKeysCommandUser ec2-instance-connect
+AuthenticationMethods publickey
+AllowUsers bouncie
+DenyUsers root
+Banner /etc/ssh/banner
+PrintLastLog yes
+HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com,ssh-ed25519
+KexAlgorithms curve25519-sha256
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+MACs hmac-sha2-512,hmac-sha2-512-etm@openssh.com

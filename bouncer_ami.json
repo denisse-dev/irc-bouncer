@@ -52,9 +52,9 @@
       "playbook_dir": "ansible"
     },
     {
-      "type":        "file",
-      "source":      "provisioner/hardening.sh",
-      "destination": "/tmp/hardening.sh"
+      "type": "ansible-local",
+      "playbook_file": "ansible/hardening.yml",
+      "playbook_dir": "ansible"
     },
     {
       "type":        "file",
@@ -62,16 +62,9 @@
       "destination": "/tmp/totp.sh"
     },
     {
-      "type":        "file",
-      "source":      "provisioner/banner",
-      "destination": "/tmp/banner"
-    },
-    {
       "type": "shell",
       "inline": [
-        "sudo chmod +x /tmp/hardening.sh /tmp/totp.sh",
-        "sudo /tmp/hardening.sh",
-        "sudo mv /tmp/banner /etc/ssh/banner",
+        "sudo chmod +x /tmp/totp.sh",
         "sudo cp /tmp/totp.sh /home/bouncie/totp.sh",
         "systemctl status sshd",
         "sudo firewall-cmd --list-services",
