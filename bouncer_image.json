@@ -57,17 +57,9 @@
       "playbook_dir": "ansible"
     },
     {
-      "type":        "file",
-      "source":      "provisioner/totp.sh",
-      "destination": "/tmp/totp.sh"
-    },
-    {
       "type": "shell",
       "inline": [
-        "sudo chmod +x /tmp/totp.sh",
-        "sudo cp /tmp/totp.sh /home/bouncie/totp.sh",
         "systemctl status sshd",
-        "sudo firewall-cmd --list-services",
         "rm .ssh/authorized_keys ; sudo rm /root/.ssh/authorized_keys"
       ]
     }
