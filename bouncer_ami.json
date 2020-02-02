@@ -33,6 +33,25 @@
   ],
   "provisioners": [
     {
+      "type": "shell",
+      "inline": [
+        "sudo yum install python -y",
+        "curl -O https://bootstrap.pypa.io/get-pip.py",
+        "sudo python get-pip.py",
+        "sudo pip install ansible"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "ansible/user.yml",
+      "playbook_dir": "ansible"
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "ansible/packages.yml",
+      "playbook_dir": "ansible"
+    },
+    {
       "type":        "file",
       "source":      "provisioner/hardening.sh",
       "destination": "/tmp/hardening.sh"
@@ -48,21 +67,9 @@
       "destination": "/tmp/banner"
     },
     {
-      "type": "ansible",
-      "playbook_file": "./provisioner/user.yml",
-      "extra_arguments": [ "--become" ]
-    },
-    {
-      "type": "ansible",
-      "playbook_file": "./provisioner/packages.yml",
-      "extra_arguments": [ "--become" ]
-    },
-    {
       "type": "shell",
       "inline": [
-        "sudo chmod +x /tmp/user.sh /tmp/packages.sh /tmp/hardening.sh /tmp/totp.sh",
-        "sudo /tmp/user.sh",
-        "sudo /tmp/packages.sh",
+        "sudo chmod +x /tmp/hardening.sh /tmp/totp.sh",
         "sudo /tmp/hardening.sh",
         "sudo mv /tmp/banner /etc/ssh/banner",
         "sudo cp /tmp/totp.sh /home/bouncie/totp.sh",

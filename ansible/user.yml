@@ -1,0 +1,29 @@
+---
+- name: Ensure the 'bouncie' user is created
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Create the 'bouncie' user
+      user:
+        name: bouncie
+        shell: /bin/bash
+    - name: Ensure the 'bouncie' user has sudo access
+      lineinfile:
+        path: /etc/sudoers.d/bouncie
+        line: 'bouncie  ALL=(ALL)   ALL'
+        create: yes
+    - name: Ensure the my public SSH keys are added to the 'bouncie' user
+      authorized_key:
+        user: bouncie
+        state: present
+        key: https://github.com/da-edra.keys
+        path: /home/bouncie/.ssh/authorized_keys
+- name: Ensure the bouncie user will set up a password on first login
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure the 'bouncie' user password is disabled and expired
+      command: "{{ item }}"
+      with_items:
+      - passwd -d bouncie
+      - passwd -e bouncie

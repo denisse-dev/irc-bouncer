@@ -1,0 +1,129 @@
+---
+- name: Ensure the required packages are installed and current packages updated
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure the EPEL repository is enabled
+      yum:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    - name: Ensure all packages are updated
+      yum:
+        name: '*'
+        state: latest
+    - name: Ensure the list of dependencies is installed
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - znc
+          - znc-devel
+          - tor
+          - torsocks
+          - emacs-nox
+          - firewalld
+          - tmux
+          - curl
+          - deltarpm
+          - google-authenticator
+          - qrencode
+          - iproute
+          - fail2ban
+    - name: Install the 'Development tools' package group
+      yum:
+        name: "@Development tools"
+        state: present
+- name: Ensure proxychains-ng is installed
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure proxychains-ng is downloaded
+      get_url:
+        url: https://github.com/rofl0r/proxychains-ng/archive/v4.14.zip
+        dest: /tmp/proxychains-ng.zip
+        checksum: sha512:261c26ae942f3f70d0e058ebc9b7e862062a0357fb96483908a8ef925698b4d76c5e1231f7fc3c51c9c6a16bb5831054e9fef72da68f47cb3ed0c80ebc1fc6cb
+    - name: Ensure proxychains is unarchived
+      unarchive:
+        src: /tmp/proxychains-ng.zip
+        dest: /tmp/
+        remote_src: yes
+    - name: Ensure proxychains is compiled and installed
+      command: "{{ item }}"
+      with_items:
+      - ./configure
+      - make
+      - make install
+      - make install-config
+      args:
+        chdir: /tmp/proxychains-ng-4.14
+- name: Ensure proxychains-ng is configured
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure Freenode's address is mapped to Tor's configuration
+      lineinfile:
+        path: /etc/tor/torrc
+        line: 'mapaddress 10.99.99.90 freenodeok2gncmy.onion'
+        insertbefore: EOF
+    - name: Ensure all daemons are reloaded
+      systemd:
+        daemon_reload: yes
+    - name: Ensure the Tor daemon is restared
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: tor
+- name: Ensure ZNC is forced to use proxychains
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure the ZNC service is enabled
+      systemd:
+        name: znc
+        enabled: yes
+    - name: Ensure the ZNC systemd directory exists
+      file:
+        path: /etc/systemd/system/znc.service.d/
+        state: directory
+    - name:
+      blockinfile:
+        path: /etc/ssh/sshd_config
+        create: yes
+        block: |
+          [Service]
+          ExecStart=
+          ExecStart=/usr/local/bin/proxychains4 /usr/bin/znc -f
+          User=znc
+    - name: Ensure all daemons are reloaded
+      systemd:
+        daemon_reload: yes
+- name: Ensure znc-clientbuffer is installed
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure znc-clientbuffer is downloaded
+      get_url:
+        url: https://github.com/CyberShadow/znc-clientbuffer/archive/master.zip
+        dest: /tmp/znc-clientbuffer.zip
+    - name: Ensure znc-clientbuffer is unarchived
+      unarchive:
+        src: /tmp/znc-clientbuffer.zip
+        dest: /tmp/
+        remote_src: yes
+    - name: Ensure znc-clientbuffer is compiled and installed
+      command: znc-buildmod clientbuffer.cpp
+      args:
+        chdir: /tmp/znc-clientbuffer-master
+    - name: Ensure znc-clientbuffer belongs to the ZNC user
+      file:
+        path: /tmp/znc-clientbuffer-master/clientbuffer.so
+        owner: znc
+        group: znc
+    - name: Ensure znc-clientbuffer is compiled and installed
+      command: mv clientbuffer.so /usr/lib64/znc/
+      args:
+        chdir: /tmp/znc-clientbuffer-master
+    - name: Ensure the ZNC daemon is restared
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: tor
