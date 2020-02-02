@@ -86,7 +86,7 @@
         state: directory
     - name:
       blockinfile:
-        path: /etc/ssh/sshd_config
+        path: /etc/systemd/system/znc.service.d/override.conf
         create: yes
         block: |
           [Service]
