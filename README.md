@@ -47,32 +47,30 @@ The authenticity of host '[<redacted>]:45632 ([<redacted>]:45632)' can't be esta
 ED25519 key fingerprint is SHA256:Y/kl0Jtlog/xYXkGl4g4oN46M6uti8q43HkWa06/9lo.
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 Warning: Permanently added '[<redacted>]:45632' (ED25519) to the list of known hosts.
- .           ..         .           .       .           .           .
-      .         .            .          .       .
-            .         ..xxxxxxxxxx....               .       .             .
-    .             MWMWMWWMWMWMWMWMWMWMWMWMW                       .
-              IIIIMWMWMWMWMWMWMWMWMWMWMWMWMWMttii:        .           .
- .      IIYVVXMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWxx...         .           .
-     IWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMx..
-   IIWMWMWMWMWMWMWMWMWBY%ZACH%AND%OWENMWMWMWMWMWMWMWMWMWMWMWMWMx..        .
-    ""MWMWMWMWMWM"""""""".  .:..   ."""""MWMWMWMWMWMWMWMWMWMWMWMWMWti.
- .     ""   . `  .: . :. : .  . :.  .  . . .  """"MWMWMWMWMWMWMWMWMWMWMWMWMti=
-        . .   :` . :   .  .'.' '....xxxxx...,'. '   ' ."""YWMWMWMWMWMWMWMWMWMW+
-     ; . ` .  . : . .' :  . ..XXXXXXXXXXXXXXXXXXXXx.    `     . "YWMWMWMWMWMWMW
-.    .  .  .    . .   .  ..XXXXXXXXWWWWWWWWWWWWWWWWXXXX.  .     .     """""""
-        ' :  : . : .  ...XXXXXWWW"   W88N88@888888WWWWWXX.   .   .       . .
-   . ' .    . :   ...XXXXXXWWW"    M88N88GGGGGG888^8M "WMBX.          .   ..  :
-         :     ..XXXXXXXXWWW"     M88888WWRWWWMW8oo88M   WWMX.     .    :    .
-           "XXXXXXXXXXXXWW"       WN8888WWWWW  W8@@@8M    BMBRX.         .  : :
-  .       XXXXXXXX=MMWW":  .      W8N888WWWWWWWW88888W      XRBRXX.  .       .
-     ....  ""XXXXXMM::::. .        W8@889WWWWWM8@8N8W      . . :RRXx.    .
-         ``...'''  MMM::.:.  .      W888N89999888@8W      . . ::::"RXV    .  :
- .       ..'''''      MMMm::.  .      WW888N88888WW     .  . mmMMMMMRXx
-      ..' .            ""MMmm .  .       WWWWWWW   . :. :,miMM"""  : ""`    .
-   .                .       ""MMMMmm . .  .  .   ._,mMMMM"""  :  ' .  :
-               .                  ""MMMMMMMMMMMMM""" .  : . '   .        .
-          .              .     .    .                      .         .
-.                                         .          .         .
+                .,aadd"'    `"bbaa,.
+            ,ad8888P'          `Y8888ba,
+         ,a88888888              88888888a,
+       a88888888888              88888888888a
+     a8888888888888b,          ,d8888888888888a
+    d8888888888888888b,_    _,d8888888888888888b
+   d88888888888888888888888888888888888888888888b
+  d8888888888888888888888888888888888888888888888b
+ I888888888888888888888888888888888888888888888888I
+,88888888888888888888888888888888888888888888888888,
+I8888888888888888PY8888888PY88888888888888888888888I
+8888888888888888"  "88888"  "88888888888888888888888
+8::::::::::::::'    `:::'    `:::::::::::::::::::::8
+Ib:::::::::::"        "        `::::::' `:::::::::dI
+`8888888888P            Y88888888888P     Y88888888'
+ Ib:::::::'              `:::::::::'       `:::::dI
+  Yb::::"                  ":::::"           "::dP
+   Y88P                      Y8P               `P
+    Y'                        "
+                                `:::::::::::;8"
+       "888888888888888888888888888888888888"
+         `"8;::::::::::::::::::::::::::;8"'
+            `"Ya;::::::::::::::::::;aP"'
+                ``""YYbbaaaaddPP""''
 You are required to change your password immediately (root enforced)
 
        __|  __|_  )
