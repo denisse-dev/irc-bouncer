@@ -28,7 +28,7 @@
           - qrencode
           - iproute
           - fail2ban
-    - name: Install the 'Development tools' package group
+    - name: Ensure the 'Development tools' package group is installed
       yum:
         name: "@Development tools"
         state: present
