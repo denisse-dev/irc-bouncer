@@ -29,17 +29,6 @@ Some of the information used to automate the creation of the IRC bouncer was tak
 
 ---
 
-## Features:
-
-The Packer image creates a hardened Amazon Linux 2 AMI that has the following features:
-
-1. Hardened SSH.
-2. Enable the Firewall.
-3. Configure Fail2ban.
-4. Disable the `root` user.
-
-For more information about what has been done read the [hardening script](provisioner/hardening.sh).
-
 ## Usage:
 
 1. Configure the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html).
@@ -51,7 +40,7 @@ For more information about what has been done read the [hardening script](provis
 
 ## Configuration (WIP):
 
-1. Connect to the instance `ssh bouncie@<redacted> -p 45632`, you'll see the following:
+1. Connect to the instance `ssh bouncie@<redacted> -p 45632`, you'll see the following when logging-in for the first time:
 
 ```
 The authenticity of host '[<redacted>]:45632 ([<redacted>]:45632)' can't be established.
@@ -100,11 +89,14 @@ New password:
 ```
 
 Upon first login you're required to set up a password for the `bouncie` user, you'll be disconnected after setting up the password.
-3. Connect to the instance again, enable two-step authentication by running the [TOTP script](provisioner/totp.sh) to enable *Time-based One-Time* passwords to SSH into the instance.
+3. Connect to the instance again, enable two-step authentication by running the [TOTP playbook](ansible/totp.yml) `ansible-playbook totp.yml` to enable *Time-based One-Time* passwords to SSH into the instance.
 
 ## Next steps:
 
-1. Add TOTP for SSH (Password logins are disabled already, I just want to set up TOTP using Linux PAM for fun).
+0. Map OFTC Tor hidden service to Proxychains.
+1. Configure Fail2Ban.
 2. Configure SELinux.
-3. Probably make ZNC's dashboard accesible only when using Tor.
-4. Probably configure fail2ban.
+3. Enable ZNC dashboard via SSH tunneling (currently the dashboard is disabled for security reasons).
+4. Enable a monitoring service (probably Grafana?).
+5. Investigate a way to automatically configure ZNC.
+6. Hack the planet.
