@@ -1,0 +1,46 @@
+---
+- name: Ensure the SSH config allows the 'bouncie' user to enable TOTP
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure keyboard-interactive:pam is added to AuthenticationMethdos
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^AuthenticationMethods'
+        line: AuthenticationMethods publickey keyboard-interactive:pam
+    - name: Ensure ChallengeResponseAuthentication is enabled
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^ChallengeResponseAuthentication'
+        line: ChallengeResponseAuthentication yes
+    - name: Ensure UsePAM is enabled
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        line: UsePAM yes
+        insertbefore: EOF
+- name: Ensure the PAM config allows the 'bouncie' user to enable TOTP
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure google_authenticator is added to PAM SSH
+      lineinfile:
+        path: /etc/pam.d/sshd
+        line: auth required pam_google_authenticator.so
+        insertbefore: BOF
+    - name: Ensure system-remote-login is disabled on PAM SSH
+      lineinfile:
+        path: /etc/pam.d/sshd
+        regexp: '^auth      include   system-remote-login'
+        line: '#auth      include   system-remote-login'
+- name: Ensure the SSH daemon loads the new config
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure the SSH daemon is reloaded
+      systemd:
+        name: sshd
+        state: reloaded
+    - name: Ensure the SSH daemon is restarted
+      systemd:
+        name: sshd
+        state: restarted

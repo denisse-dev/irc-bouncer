@@ -27,3 +27,13 @@
       with_items:
       - passwd -d bouncie
       - passwd -e bouncie
+- name: Ensure the TOTP playbook is inside the 'bouncie' user home folder
+  hosts: localhost
+  become: yes
+  tasks:
+    - copy:
+        src: totp.yml
+        dest: /home/bouncie/totp.yml
+        owner: bouncie
+        group: bouncie
+        mode: '0700'
