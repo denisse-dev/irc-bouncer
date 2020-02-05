@@ -88,6 +88,8 @@ New password:
 
 Upon first login you're required to set up a password for the `bouncie` user, you'll be disconnected after setting up the password.
 3. Connect to the instance again, enable two-step authentication by running the [TOTP playbook](ansible/totp.yml) `ansible-playbook totp.yml` to enable *Time-based One-Time* passwords to SSH into the instance.
+4. For security reasons the ZNC dashboard is only accessible from the instance that is running ZNC, in order to access the ZNC dashboard from your local machine you need to create an SSH tunel where you bind the port of the machine to a port on your machine ex. `ssh -N -L 8000:localhost:8000 bouncie@<redacted> -p 45632` then, you can access the dashboard from your web browser using the new bind port ex. `https://localhost:8000`.
+5. Keep configuring ZNC to suit your needs using the dashboard.
 
 ## Next steps:
 

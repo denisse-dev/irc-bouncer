@@ -72,6 +72,10 @@
         state: restarted
         daemon_reload: yes
         name: tor
+    - name: Ensure the Tor daemon is enabled
+      systemd:
+        name: tor
+        enabled: yes
 - name: Ensure ZNC is forced to use proxychains
   hosts: localhost
   become: yes
@@ -84,15 +88,13 @@
       file:
         path: /etc/systemd/system/znc.service.d/
         state: directory
-    - name:
-      blockinfile:
-        path: /etc/systemd/system/znc.service.d/override.conf
-        create: yes
-        block: |
-          [Service]
-          ExecStart=
-          ExecStart=/usr/local/bin/proxychains4 /usr/bin/znc -f
-          User=znc
+    - name: Ensure the ZNC daemon override is in place
+      copy:
+        src: override.conf
+        dest: /etc/systemd/system/znc.service.d/override.conf
+        owner: root
+        group: root
+        mode: '0644'
     - name: Ensure all daemons are reloaded
       systemd:
         daemon_reload: yes
@@ -126,4 +128,4 @@
       systemd:
         state: restarted
         daemon_reload: yes
-        name: tor
+        name: znc
