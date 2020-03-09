@@ -62,7 +62,7 @@
     - name: Ensure Freenode's address is mapped to Tor's configuration
       lineinfile:
         path: /etc/tor/torrc
-        line: 'mapaddress 10.99.99.90 freenodeok2gncmy.onion'
+        line: 'mapaddress 10.99.99.90 ajnvpgl6prmkb7yktvue6im5wiedlz2w32uhcwaamdiecdrfpwwgnlqd.onion'
         insertbefore: EOF
     - name: Ensure all daemons are reloaded
       systemd:
