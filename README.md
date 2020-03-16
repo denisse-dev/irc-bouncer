@@ -72,14 +72,6 @@ Ib:::::::::::"        "        `::::::' `:::::::::dI
             `"Ya;::::::::::::::::::;aP"'
                 ``""YYbbaaaaddPP""''
 You are required to change your password immediately (root enforced)
-
-       __|  __|_  )
-       _|  (     /   Amazon Linux 2 AMI
-      ___|\___|___|
-
-https://aws.amazon.com/amazon-linux-2/
-No packages needed for security; 1 packages available
-Run "sudo yum update" to apply all updates.
 WARNING: Your password has expired.
 You must change your password now and login again!
 Changing password for user bouncie.

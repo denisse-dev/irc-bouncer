@@ -1,0 +1,125 @@
+---
+- name: Ensure ZNC's directories are created and is configured
+  hosts: localhost
+  become: yes
+  vars:
+    favcolor: blue
+  vars_files:
+    - variables.json
+  tasks:
+    - name: Ensure the ZNC configuration directory exists
+      file:
+        path: /var/lib/znc/.znc/configs/
+        state: directory
+        mode: '0755'
+    - name: Ensure the ZNC user directory exists
+      file:
+        path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
+        state: directory
+        mode: '0755'
+    - name: Ensure the ownership of the ZNC directory is changed
+      file:
+        path: /var/lib/znc/.znc/
+        state: directory
+        recurse: yes
+        owner: znc
+        group: znc
+        mode: 755
+    - name: Ensure the ZNC configuration is in place
+      copy:
+        src: znc.conf
+        dest: /var/lib/znc/.znc/configs/znc.conf
+        owner: znc
+        group: znc
+        mode: '0644'
+- name: Ensure the certificates and fingerprints are obtained
+  hosts: localhost
+  become: yes
+  become_user: znc
+  vars:
+    favcolor: blue
+  vars_files:
+    - variables.json
+  tasks:
+    - name: Ensure the ZNC certificate is created
+      shell:
+        cmd: znc --makepem
+    - name: Ensure the ZNC certificate fingerprint is obtained
+      shell:
+        cmd: cat /var/lib/znc/.znc/znc.pem | openssl x509 -sha512 -fingerprint -noout | tr -d ':' | tr 'A-Z' 'a-z' | cut -d = -f 2
+      register: znc_cert_fingerprint
+    - name: Ensure the ZNC certificate fingerprint is printed
+      debug:
+        var: znc_cert_fingerprint.stdout_lines
+    - name: Ensure the certificate for the user is created
+      shell:
+        cmd: openssl req -nodes -newkey rsa:4096 -keyout user.pem -x509 -days 3650 -out user.pem -subj "/CN={{ freenode_user }}"
+      args:
+        chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
+    - name: Ensure the fingerprint for the user certificate is printed
+      shell:
+        cmd: openssl x509 -sha1 -noout -fingerprint -in user.pem | sed -e 's/^.*=//;s/://g;y/ABCDEF/abcdef/'
+      args:
+        chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
+      register: user_cert_fingerprint
+    - name: Ensure the user certificate fingerprint is printed
+      debug:
+        var: user_cert_fingerprint.stdout_lines
+- name: Ensure the ZNC service is created and enabled with override
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure the ZNC service is enabled
+      systemd:
+        name: znc
+        enabled: yes
+    - name: Ensure the ZNC systemd directory exists
+      file:
+        path: /etc/systemd/system/znc.service.d/
+        state: directory
+    - name: Ensure the ZNC daemon override is in place
+      copy:
+        src: override.conf
+        dest: /etc/systemd/system/znc.service.d/override.conf
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Ensure all daemons are reloaded
+      systemd:
+        daemon_reload: yes
+    - name: Ensure the ZNC daemon is restared
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: znc
+- name: Ensure znc-clientbuffer is installed
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure znc-clientbuffer is downloaded
+      get_url:
+        url: https://github.com/CyberShadow/znc-clientbuffer/archive/master.zip
+        dest: /tmp/znc-clientbuffer.zip
+    - name: Ensure znc-clientbuffer is unarchived
+      unarchive:
+        src: /tmp/znc-clientbuffer.zip
+        dest: /tmp/
+        remote_src: yes
+    - name: Ensure znc-clientbuffer is compiled and installed
+      command: znc-buildmod clientbuffer.cpp
+      args:
+        chdir: /tmp/znc-clientbuffer-master
+    - name: Ensure znc-clientbuffer belongs to the ZNC user
+      file:
+        path: /tmp/znc-clientbuffer-master/clientbuffer.so
+        owner: znc
+        group: znc
+    - name: Ensure znc-clientbuffer is compiled and installed
+      command: mv clientbuffer.so /usr/lib64/znc/
+      args:
+        chdir: /tmp/znc-clientbuffer-master
+    - name: Ensure the ZNC daemon is restared
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: znc

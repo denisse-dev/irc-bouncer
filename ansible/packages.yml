@@ -49,10 +49,10 @@
     - name: Ensure proxychains is compiled and installed
       command: "{{ item }}"
       with_items:
-      - ./configure
-      - make
-      - make install
-      - make install-config
+        - ./configure
+        - make -j 3
+        - make install
+        - make install-config
       args:
         chdir: /tmp/proxychains-ng-4.14
 - name: Ensure proxychains-ng is configured
@@ -76,56 +76,3 @@
       systemd:
         name: tor
         enabled: yes
-- name: Ensure ZNC is forced to use proxychains
-  hosts: localhost
-  become: yes
-  tasks:
-    - name: Ensure the ZNC service is enabled
-      systemd:
-        name: znc
-        enabled: yes
-    - name: Ensure the ZNC systemd directory exists
-      file:
-        path: /etc/systemd/system/znc.service.d/
-        state: directory
-    - name: Ensure the ZNC daemon override is in place
-      copy:
-        src: override.conf
-        dest: /etc/systemd/system/znc.service.d/override.conf
-        owner: root
-        group: root
-        mode: '0644'
-    - name: Ensure all daemons are reloaded
-      systemd:
-        daemon_reload: yes
-- name: Ensure znc-clientbuffer is installed
-  hosts: localhost
-  become: yes
-  tasks:
-    - name: Ensure znc-clientbuffer is downloaded
-      get_url:
-        url: https://github.com/CyberShadow/znc-clientbuffer/archive/master.zip
-        dest: /tmp/znc-clientbuffer.zip
-    - name: Ensure znc-clientbuffer is unarchived
-      unarchive:
-        src: /tmp/znc-clientbuffer.zip
-        dest: /tmp/
-        remote_src: yes
-    - name: Ensure znc-clientbuffer is compiled and installed
-      command: znc-buildmod clientbuffer.cpp
-      args:
-        chdir: /tmp/znc-clientbuffer-master
-    - name: Ensure znc-clientbuffer belongs to the ZNC user
-      file:
-        path: /tmp/znc-clientbuffer-master/clientbuffer.so
-        owner: znc
-        group: znc
-    - name: Ensure znc-clientbuffer is compiled and installed
-      command: mv clientbuffer.so /usr/lib64/znc/
-      args:
-        chdir: /tmp/znc-clientbuffer-master
-    - name: Ensure the ZNC daemon is restared
-      systemd:
-        state: restarted
-        daemon_reload: yes
-        name: znc
