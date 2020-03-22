@@ -59,10 +59,15 @@
   hosts: localhost
   become: yes
   tasks:
-    - name: Ensure Freenode's address is mapped to Tor's configuration
+    - name: Ensure Freenode's network address is mapped to Tor's configuration
       lineinfile:
         path: /etc/tor/torrc
         line: 'mapaddress 10.99.99.90 ajnvpgl6prmkb7yktvue6im5wiedlz2w32uhcwaamdiecdrfpwwgnlqd.onion'
+        insertbefore: EOF
+    - name: Ensure OFTC's network address is mapped to Tor's configuration
+      lineinfile:
+        path: /etc/tor/torrc
+        line: 'mapaddress 10.99.99.91 irc.oftc.net'
         insertbefore: EOF
     - name: Ensure all daemons are reloaded
       systemd:

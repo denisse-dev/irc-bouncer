@@ -12,9 +12,14 @@
         path: /var/lib/znc/.znc/configs/
         state: directory
         mode: '0755'
-    - name: Ensure the ZNC user directory exists
+    - name: Ensure the Freenode network directory exists
       file:
         path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
+        state: directory
+        mode: '0755'
+    - name: Ensure the OFTC network directory exists
+      file:
+        path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/oftc/moddata/cert/
         state: directory
         mode: '0755'
     - name: Ensure the ownership of the ZNC directory is changed
@@ -51,11 +56,15 @@
     - name: Ensure the ZNC certificate fingerprint is printed
       debug:
         var: znc_cert_fingerprint.stdout_lines
-    - name: Ensure the certificate for the user is created
+    - name: Ensure the Freenode network user certificate is created
       shell:
         cmd: openssl req -nodes -newkey rsa:4096 -keyout user.pem -x509 -days 3650 -out user.pem -subj "/CN={{ freenode_user }}"
       args:
         chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
+    - name: Ensure the OFTC network user certificate is in place
+      copy:
+        src: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/user.pem
+        dest: /var/lib/znc/.znc/users/{{ znc_user }}/networks/oftc/moddata/cert/user.pem
     - name: Ensure the fingerprint for the user certificate is printed
       shell:
         cmd: openssl x509 -sha1 -noout -fingerprint -in user.pem | sed -e 's/^.*=//;s/://g;y/ABCDEF/abcdef/'
