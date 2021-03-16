@@ -30,3 +30,4 @@ override.tf.json
 
 ansible/znc.conf
 ansible/variables.json
+variables.json
