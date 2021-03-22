@@ -1,59 +1,42 @@
 ---
-- name: Ensure the SSH configuration is hardened
-  hosts: localhost
-  become: yes
+- hosts: localhost
+  become: true
+  gather_facts: false
+
+  vars_files:
+  - vars/ansible.json
+
   tasks:
-    - name: Ensure the hardened SSH config replaces the default config
-      copy:
-        src: sshd_config
-        dest: /etc/ssh/sshd_config
-        owner: root
-        group: root
-        mode: '0600'
-    - name: Ensure the SSH banner is in place
-      copy:
-        src: banner
-        dest: /etc/ssh/banner
-        owner: bouncie
-        group: bouncie
-        mode: '0644'
-    - name: Ensure the SSH daemon is reloaded
-      systemd:
-        name: sshd
-        state: reloaded
-    - name: Ensure the SSH daemon is restarted
-      systemd:
-        name: sshd
-        state: restarted
-- name: Ensure the firewall is configured
-  hosts: localhost
-  become: yes
-  tasks:
-    - name: Ensure the firewalld daemon is started
-      systemd:
-        name: firewalld
-        state: started
-    - name: Ensure the new SSH port is open
-      firewalld:
-        port: 45632/tcp
-        permanent: yes
-        state: enabled
-    - name: Ensure the TLS IRC port is open
-      firewalld:
-        port: 6697/tcp
-        permanent: yes
-        state: enabled
-    - name: Ensure firewall-cmd is reloaded
-      command: firewall-cmd --reload
-    - name: Ensure the firewalld daemon is enabled
-      systemd:
-        name: firewalld
-        enabled: yes
-- name: Ensure the 'root' user is disabled
-  hosts: localhost
-  become: yes
-  tasks:
-    - lineinfile:
-        path: /etc/passwd
-        regexp: '^root:x:0:0:root:/root:/bin/bash'
-        line: root:x:0:0:root:/root:/sbin/nologin
+  - name: Ensure the hardened SSH config replaces the default config
+    ansible.builtin.template:
+      src: templates/sshd_config.j2
+      dest: /etc/ssh/sshd_config
+      owner: root
+      group: root
+      mode: "u=rw"
+      validate: /usr/sbin/sshd -t -f %s
+  - name: Ensure the SSH banner is in place
+    ansible.builtin.copy:
+      src: files/banner
+      dest: /etc/ssh/banner
+      owner: "{{ user_name }}"
+      group: "{{ user_name }}"
+      mode: "u=rw,g=r,o=r"
+  - name: Ensure the SSH daemon is reloaded and restarted
+    ansible.builtin.systemd:
+      name: sshd
+      state: restarted
+      daemon_reload: yes
+  - name: Ensure the firewalld daemon is enabled
+    ansible.builtin.systemd:
+      name: firewalld
+      enabled: yes
+  - name: Ensure the new SSH port is open permanently
+    ansible.builtin.command: "firewall-offline-cmd --zone=public --add-port={{ ssh_port }}/tcp"
+  - name: Ensure the TLS IRC port is open permanently
+    ansible.builtin.command: "firewall-offline-cmd --zone=public --add-port={{ irc_port }}/tcp"
+  - name: Ensure the 'root' user is disabled
+    ansible.builtin.lineinfile:
+      path: /etc/passwd
+      regexp: '^root:x:0:0:root:/root:/bin/bash'
+      line: root:x:0:0:root:/root:/sbin/nologin

@@ -26,4 +26,15 @@ build {
       "pacman -S ansible --noconfirm"
     ]
   }
+
+  provisioner "ansible-local" {
+    playbook_dir   = "ansible"
+    playbook_files = [
+      "ansible/user.yml",
+      "ansible/packages.yml",
+      "ansible/hardening.yml",
+      "ansible/znc.yml"
+    ]
+    galaxy_file = "ansible/requirements.yml"
+  }
 }
