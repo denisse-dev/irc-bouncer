@@ -6,6 +6,7 @@ help:
 
 create-variables: ## create variables files
 	@cp variables_sample.json variables.json
+	@cp ansible/vars/ansible_sample.json ansible/vars/ansible.json
 
 build: ## build the packer image
 	@packer build -var-file=variables.json packer/

@@ -1,0 +1,16 @@
+{
+    "freenode_trusted_server_fingerprint": "",
+    "freenode_user": "",
+    "irc_nick": "",
+    "irc_port": "",
+    "public_ssh_keys_url": "https://github.com/da-edra.keys",
+    "ssh_port": "",
+    "user_name": "",
+    "user_shell": "/bin/bash",
+    "znc_nick": "",
+    "znc_password": "",
+    "znc_password_hash": "",
+    "znc_password_salt": "",
+    "znc_port": "",
+    "znc_user": ""
+}

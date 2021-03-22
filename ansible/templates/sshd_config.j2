@@ -1,5 +1,5 @@
 #	$OpenBSD: sshd_config,v 1.100 2016/08/15 12:32:04 naddy Exp $
-Port 45632
+Port {{ ssh_port }}
 HostKey /etc/ssh/ssh_host_ed25519_key
 SyslogFacility AUTHPRIV
 LogLevel VERBOSE
@@ -22,7 +22,7 @@ Subsystem sftp  /usr/libexec/openssh/sftp-server
 AuthorizedKeysCommand /opt/aws/bin/eic_run_authorized_keys %u %f
 AuthorizedKeysCommandUser ec2-instance-connect
 AuthenticationMethods publickey
-AllowUsers bouncie
+AllowUsers {{ user_name }}
 DenyUsers root
 Banner /etc/ssh/banner
 PrintLastLog yes
