@@ -1,39 +1,38 @@
 ---
 - hosts: localhost
-  become: yes
-  gather_facts: False
+  become: true
+  gather_facts: true
 
   vars_files:
   - vars/ansible.json
 
   tasks:
   - name: Ensure the user is created
-    user:
+    ansible.builtin.user:
       name: "{{ user_name }}"
-      shell: "{{ user_shell }}"
   - name: Ensure the user has sudo access
-    lineinfile:
+    ansible.builtin.lineinfile:
       path: "/etc/sudoers.d/{{ user_name }}"
       line: "{{ user_name }}  ALL=(ALL)   ALL"
       mode: "u=rw,g=r,o=r"
-      create: yes
+      create: true
   - name: Ensure my public SSH keys are added to the user
-    authorized_key:
+    ansible.builtin.authorized_key:
       user: "{{ user_name }}"
       state: present
       key: "{{ public_ssh_keys_url }}"
       path: "/home/{{ user_name }}/.ssh/authorized_keys"
   - name: Ensure the user password is disabled and expired
-    command: "{{ item }}"
+    ansible.builtin.command: "{{ item }}"
     with_items:
       - passwd -d {{ user_name }}
       - passwd -e {{ user_name }}
-    changed_when: True
+    changed_when: true
   - name: Ensure the TOTP playbook is inside the user home folder
-    copy:
+    ansible.builtin.copy:
       src: totp.yml
       dest: /home/{{ user_name }}/totp.yml
       owner: "{{ user_name }}"
       group: "{{ user_name }}"
       mode: "u=rwx"
-      remote_src: yes
+      remote_src: true

@@ -1,16 +1,19 @@
-source "linode" "irc_bouncer" {
-  ssh_clear_authorized_keys = true
+packer {
+  required_plugins {
+    linode = {
+      version = ">= 0.0.1"
+      source  = "github.com/hashicorp/linode"
+    }
+  }
+}
 
-  linode_token      = var.linode_token
-  ssh_username      = var.ssh_username
-  image             = var.irc_bouncer_image
-  region            = var.irc_bouncer_region
-  instance_type     = var.irc_bouncer_instance_type
-  instance_label    = var.irc_bouncer_instance_label
-  instance_tags     = var.irc_bouncer_instance_tags
-  swap_size         = var.irc_bouncer_swap_size
-  image_label       = var.irc_bouncer_image_label
-  image_description = var.irc_bouncer_image_description
+source "linode" "irc_bouncer" {
+  image         = var.image
+  instance_type = var.instance_type
+  linode_token  = var.linode_token
+  region        = var.region
+  ssh_username  = var.ssh_username
+  swap_size     = var.swap_size
 }
 
 build {
@@ -22,7 +25,9 @@ build {
 
   provisioner "shell" {
     inline = [
-      "pacman -Syu --noconfirm",
+      "pacman -Sy reflector --noconfirm",
+      "reflector --country us --latest 15 --protocol https --sort rate --save /etc/pacman.d/mirrorlist --verbose",
+      "pacman -Su --noconfirm",
       "pacman -S ansible --noconfirm"
     ]
   }
@@ -35,6 +40,5 @@ build {
       "ansible/hardening.yml",
       "ansible/znc.yml"
     ]
-    galaxy_file = "ansible/requirements.yml"
   }
 }

@@ -26,11 +26,11 @@
     ansible.builtin.systemd:
       name: sshd
       state: restarted
-      daemon_reload: yes
+      daemon_reload: true
   - name: Ensure the firewalld daemon is enabled
     ansible.builtin.systemd:
       name: firewalld
-      enabled: yes
+      enabled: true
   - name: Ensure the new SSH port is open permanently
     ansible.builtin.command: "firewall-offline-cmd --zone=public --add-port={{ ssh_port }}/tcp"
   - name: Ensure the TLS IRC port is open permanently

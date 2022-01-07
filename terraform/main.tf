@@ -1,7 +1,8 @@
 terraform {
   required_providers {
     linode = {
-      source = "linode/linode"
+      source  = "linode/linode"
+      version = "1.25.1"
     }
   }
   required_version = ">= 0.14"
@@ -12,18 +13,13 @@ provider "linode" {
 }
 
 resource "linode_instance" "irc_bouncer" {
-  tags             = var.tags
+  image            = var.image
   region           = var.region
-  group            = var.linode_instance_irc_bouncer_group
-  image            = var.linode_instance_irc_bouncer_image
-  label            = var.linode_instance_irc_bouncer_label
-  private_ip       = var.linode_instance_irc_bouncer_private_ip
-  root_pass        = var.linode_instance_irc_bouncer_root_pass
-  swap_size        = var.linode_instance_irc_bouncer_swap_size
-  type             = var.linode_instance_irc_bouncer_type
-  watchdog_enabled = true
+  swap_size        = var.swap_size
+  type             = var.type
+  watchdog_enabled = var.watchdog_enabled
 
   alerts {
-    cpu = 85
+    cpu = 90
   }
 }

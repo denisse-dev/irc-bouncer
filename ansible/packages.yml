@@ -1,24 +1,14 @@
 ---
 - hosts: localhost
-  become: yes
-  gather_facts: False
-
-  vars_files:
-  - vars/ansible.json
+  become: true
+  gather_facts: true
 
   tasks:
   - name: Ensure the list of dependencies is fulfilled
-    pacman:
+    ansible.builtin.pacman:
       name:
-        - curl
-        - ebtables
         - emacs-nox
-        - fail2ban
         - firewalld
-        - git
-        - go
-        - iproute
-        - ipset
         - libpam-google-authenticator
         - proxychains-ng
         - qrencode
@@ -28,25 +18,25 @@
         - znc
         - znc-clientbuffer
       state: present
-  - name: Ensure Freenode's network address is mapped to Tor's configuration
-    lineinfile:
+  - name: Ensure LiberaChat's network address is mapped to Tor's configuration
+    ansible.builtin.lineinfile:
       path: /etc/tor/torrc
-      line: 'mapaddress 10.99.99.90 ajnvpgl6prmkb7yktvue6im5wiedlz2w32uhcwaamdiecdrfpwwgnlqd.onion'
+      line: 'MapAddress 10.99.99.90 libera75jm6of4wxpxt4aynol3xjmbtxgfyjpu34ss4d7r7q2v5zrpyd.onion'
       insertbefore: EOF
   - name: Ensure OFTC's network address is mapped to Tor's configuration
-    lineinfile:
+    ansible.builtin.lineinfile:
       path: /etc/tor/torrc
-      line: 'mapaddress 10.99.99.91 irc.oftc.net'
+      line: 'MapAddress 10.99.99.91 irc.oftc.net'
       insertbefore: EOF
   - name: Ensure all daemons are reloaded
-    systemd:
-      daemon_reload: yes
+    ansible.builtin.systemd:
+      daemon_reload: true
   - name: Ensure the Tor daemon is restared
-    systemd:
+    ansible.builtin.systemd:
       state: restarted
-      daemon_reload: yes
+      daemon_reload: true
       name: tor
   - name: Ensure the Tor daemon is enabled
-    systemd:
+    ansible.builtin.systemd:
       name: tor
-      enabled: yes
+      enabled: true

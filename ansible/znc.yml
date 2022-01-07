@@ -8,22 +8,22 @@
 
   tasks:
   - name: Ensure the ZNC configuration directory exists
-    file:
+    ansible.builtin.file:
       path: /var/lib/znc/.znc/configs/
       state: directory
       mode: '0755'
-  - name: Ensure the Freenode network directory exists
-    file:
-      path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
+  - name: Ensure the LiberaChat network directory exists
+    ansible.builtin.file:
+      path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/liberachat/moddata/cert/
       state: directory
       mode: '0755'
   - name: Ensure the OFTC network directory exists
-    file:
+    ansible.builtin.file:
       path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/oftc/moddata/cert/
       state: directory
       mode: '0755'
   - name: Ensure the ownership of the ZNC directory is changed
-    file:
+    ansible.builtin.file:
       path: /var/lib/znc/.znc/
       state: directory
       recurse: true
@@ -43,33 +43,43 @@
     shell:
       cmd: znc --makepem
   - name: Ensure the ZNC certificate fingerprint is obtained
-    shell:
+    ansible.builtin.shell:
       cmd: cat /var/lib/znc/.znc/znc.pem | openssl x509 -sha512 -fingerprint -noout | tr -d ':' | tr 'A-Z' 'a-z' | cut -d = -f 2
     register: znc_cert_fingerprint
   - name: Ensure the ZNC certificate fingerprint is printed
-    debug:
+    ansible.builtin.debug:
       var: znc_cert_fingerprint.stdout_lines
-  - name: Ensure the Freenode network user certificate is created
-    shell:
-      cmd: openssl req -nodes -newkey rsa:4096 -keyout user.pem -x509 -days 3650 -out user.pem -subj "/CN={{ freenode_user }}"
+  - name: Ensure the LiberaChat network user certificate is created
+    ansible.builtin.shell:
+      cmd: openssl req -nodes -newkey rsa:4096 -keyout user.pem -x509 -days 3650 -out user.pem -subj "/CN={{ liberachat_user }}"
     args:
-      chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
-  - name: Ensure the OFTC network user certificate is in place
-    copy:
-      src: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/user.pem
-      dest: /var/lib/znc/.znc/users/{{ znc_user }}/networks/oftc/moddata/cert/user.pem
+      chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/liberachat/moddata/cert/
+  - name: Ensure the OFTC network user certificate is created
+    ansible.builtin.shell:
+      cmd: openssl req -nodes -newkey rsa:4096 -keyout user.pem -x509 -days 3650 -out user.pem -subj "/CN={{ oftc_user }}"
+    args:
+      chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/oftc/moddata/cert/
   - name: Ensure the fingerprint for the user certificate is printed
-    shell:
+    ansible.builtin.shell:
       cmd: openssl x509 -sha1 -noout -fingerprint -in user.pem | sed -e 's/^.*=//;s/://g;y/ABCDEF/abcdef/'
     args:
-      chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/
-    register: user_cert_fingerprint
+      chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/liberachat/moddata/cert/
+    register: liberachat_fingerprint
   - name: Ensure the user certificate fingerprint is printed
-    debug:
-      var: user_cert_fingerprint.stdout_lines
-  - name: Ensure the Freenode certificate belongs to the ZNC user
+    ansible.builtin.debug:
+      var: liberachat_fingerprint.stdout_lines
+  - name: Ensure the fingerprint for the user certificate is printed
+    ansible.builtin.shell:
+      cmd: openssl x509 -sha1 -noout -fingerprint -in user.pem | sed -e 's/^.*=//;s/://g;y/ABCDEF/abcdef/'
+    args:
+      chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/oftc/moddata/cert/
+    register: oftc_fingerprint
+  - name: Ensure the OFTC certificate fingerprint is printed
+    ansible.builtin.debug:
+      var: oftc_fingerprint.stdout_lines
+  - name: Ensure the LiberaChat certificate belongs to the ZNC user
     ansible.builtin.file:
-      path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/freenode/moddata/cert/user.pem
+      path: /var/lib/znc/.znc/users/{{ znc_user }}/networks/liberachat/moddata/cert/user.pem
       owner: znc
       group: znc
   - name: Ensure the OFTC certificate belongs to the ZNC user
@@ -78,25 +88,25 @@
       owner: znc
       group: znc
   - name: Ensure the ZNC service is enabled
-    systemd:
+    ansible.builtin.systemd:
       name: znc
       enabled: true
   - name: Ensure the ZNC systemd directory exists
-    file:
+    ansible.builtin.file:
       path: /etc/systemd/system/znc.service.d/
       state: directory
   - name: Ensure the ZNC daemon override is in place
-    copy:
+    ansible.builtin.copy:
       src: files/override.conf
       dest: /etc/systemd/system/znc.service.d/override.conf
       owner: root
       group: root
       mode: '0644'
   - name: Ensure all daemons are reloaded
-    systemd:
+    ansible.builtin.systemd:
       daemon_reload: true
   - name: Ensure the ZNC daemon is restared
-    systemd:
+    ansible.builtin.systemd:
       state: restarted
       daemon_reload: true
       name: znc
