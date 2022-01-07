@@ -4,13 +4,11 @@ This repository contains configuration to deploy a ZNC IRC bouncer via Terraform
 
 # Pre requisites
 
-1. Create a [Linode API Token](https://www.linode.com/docs/products/tools/linode-api/guides/get-access-token/) with **Read/Write** access for the **Images** and **Linodes** scopes:
-
-<div align="center">
-
-![Screenshot of Linode's interface showcasing the possible scopes a Linode access token can have](img/linode-api-scopes.png)
-
-</div>
+- A [Linode API Token](https://www.linode.com/docs/products/tools/linode-api/guides/get-access-token/) with **Read/Write** access for the **Images** and **Linodes** scopes.
+- The following packages:
+  - [ansible](https://archlinux.org/packages/community/any/ansible/)
+  - [packer](https://archlinux.org/packages/community/x86_64/packer/)
+  - [terraform](https://archlinux.org/packages/community/x86_64/terraform/)
 
 # Build image
 
@@ -65,13 +63,21 @@ terraform init
 terraform apply
 ```
 
-3. Connect to the instance `ssh <user>@<ip> -p <port>`, you're required to set-up your password upon first loggin:
+3. To connect to the instance:
+
+```bash
+ssh <user>@<ip> -p <port>
+```
+
+You're required to set-up your password upon first login:
 
 <div align="center">
 
 ![Terminal showing how to set password of the instance user](img/set-password.svg)
 
 </div>
+
+First login:
 
 <div align="center">
 
