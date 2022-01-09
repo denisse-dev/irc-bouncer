@@ -1,7 +1,5 @@
 ---
 - hosts: localhost
-  become: true
-  gather_facts: true
 
   tasks:
   - name: Ensure keyboard-interactive:pam is added to AuthenticationMethdos

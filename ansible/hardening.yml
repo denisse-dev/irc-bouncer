@@ -1,7 +1,5 @@
 ---
 - hosts: localhost
-  become: true
-  gather_facts: false
 
   vars_files:
   - vars/ansible.json

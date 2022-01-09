@@ -29,6 +29,7 @@ build {
     inline = [
       "pacman -Sy reflector --noconfirm",
       "reflector --country us --latest 15 --protocol https --sort rate --save /etc/pacman.d/mirrorlist --verbose",
+      "sed -i 's/^#ParallelDownloads = 5/ParallelDownloads = 10/' /etc/pacman.conf",
       "pacman -Su --noconfirm",
       "pacman -S ansible --noconfirm"
     ]

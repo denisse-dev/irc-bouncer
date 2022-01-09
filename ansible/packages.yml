@@ -1,7 +1,5 @@
 ---
 - hosts: localhost
-  become: true
-  gather_facts: true
 
   tasks:
   - name: Ensure the list of dependencies is fulfilled
@@ -19,26 +17,14 @@
         - znc
         - znc-clientbuffer
       state: present
-  - name: Ensure LiberaChat's network address is mapped to Tor's configuration
-    ansible.builtin.lineinfile:
-      path: /etc/tor/torrc
-      line: 'MapAddress 10.99.99.90 libera75jm6of4wxpxt4aynol3xjmbtxgfyjpu34ss4d7r7q2v5zrpyd.onion'
-      insertbefore: EOF
-  - name: Ensure OFTC's network address is mapped to Tor's configuration
-    ansible.builtin.lineinfile:
-      path: /etc/tor/torrc
-      line: 'MapAddress 10.99.99.91 irc.oftc.net'
-      insertbefore: EOF
-  - name: Ensure all daemons are reloaded
-    ansible.builtin.systemd:
-      daemon_reload: true
-  - name: Ensure the Tor daemon is restared
-    ansible.builtin.systemd:
-      state: restarted
-      daemon_reload: true
-      name: tor
-  - name: Ensure the Tor daemon is enabled
-    ansible.builtin.systemd:
-      name: tor
-      enabled: true
   - name: Ensure the Reflector configuration is in place
+    ansible.builtin.copy:
+      src: files/reflector.conf
+      dest: /etc/xdg/reflector/reflector.conf
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Ensure the Reflector service  is started and enabled
+    ansible.builtin.systemd:
+      name: reflector
+      enabled: true
