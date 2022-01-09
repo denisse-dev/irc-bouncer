@@ -1,33 +1,80 @@
+AnonIPLimit = 10
+AuthOnlyViaModule = false
+ConfigWriteDelay = 0
+ConnectDelay = 5
+HideVersion = true
 LoadModule = webadmin
+MaxBufferSize = 500
+ProtectWebSessions = true
+SSLCertFile = /var/lib/znc/.znc/znc.pem
+SSLDHParamFile = /var/lib/znc/.znc/znc.pem
+SSLKeyFile = /var/lib/znc/.znc/znc.pem
+ServerThrottle = 30
 Version = 1.8.2
 
 <Listener listener0>
-	AllowIRC = true
+	AllowIRC = false
 	AllowWeb = true
 	IPv4 = true
 	IPv6 = true
-	Port = 8000
+	Port = {{ znc_port }}
 	SSL = false
 	URIPrefix = /
 </Listener>
 
-<Listener l>
-	Port = {{ znc_port }}
+<Listener listener1>
+	AllowIRC = true
+	AllowWeb = false
 	IPv4 = true
-	IPv6 = true
+  IPv6 = true
+	Port = 6697
 	SSL = true
+	URIPrefix = /
 </Listener>
 
-<User {{ znc_user }}>
-	Pass       = {{ znc_pass }}
-	Admin      = true
-	Nick       = {{ znc_nick }}
-	AltNick    = {{ znc_nick }}_
-	Ident      = {{ znc_nick }}
+<User denisse>
+	Admin = true
+	AltNick = {{ znc_nick }}_
+	AppendTimestamp = false
+	AuthOnlyViaModule = false
+	AutoClearChanBuffer = true
+	AutoClearQueryBuffer = true
+	ChanBufferSize = 50
+	DenyLoadMod = false
+	DenySetBindHost = false
+	Ident = {{ znc_nick }}
+	JoinTries = 10
 	LoadModule = chansaver
 	LoadModule = controlpanel
+	MaxJoins = 0
+	MaxNetworks = 1
+	MaxQueryBuffers = 50
+	MultiClients = true
+	Nick = {{ znc_nick }}
+	NoTrafficTimeout = 180
+	PrependTimestamp = true
+	QueryBufferSize = 50
+	QuitMsg = %znc%
+	RealName = {{ znc_nick }}
+	StatusPrefix = *
+	TimestampFormat = [%H:%M:%S]
 
-  <Network liberachat>
+	<Network liberachat>
+		Encoding = ^UTF-8
+		FloodBurst = 9
+		FloodRate = 2.00
+		IRCConnectEnabled = true
+		JoinDelay = 0
+		LoadModule = cert
+		LoadModule = sasl
+		LoadModule = simple_away
+		LoadModule = clientbuffer
+		Server = 10.0.0.1 +6697
+		TrustAllCerts = false
+		TrustPKI = true
+	</Network>
+
+	<Network oftc>
 		Encoding = ^UTF-8
 		FloodBurst = 9
 		FloodRate = 2.00
@@ -37,29 +84,14 @@ Version = 1.8.2
 		LoadModule = clientbuffer
 		LoadModule = sasl
 		LoadModule = simple_away
-		Server = 10.99.99.90 +6697
+		Server = 10.0.0.2 +6697
 		TrustAllCerts = false
 		TrustPKI = true
-
-		<Chan #archlinux>
-		</Chan>
 	</Network>
 
-  <Network oftc>
-		Encoding = ^UTF-8
-		FloodBurst = 9
-		FloodRate = 2.00
-		IRCConnectEnabled = true
-		JoinDelay = 0
-		LoadModule = cert
-		LoadModule = clientbuffer
-		LoadModule = sasl
-		LoadModule = simple_away
-		Server = 10.99.99.91 +6697
-		TrustAllCerts = false
-		TrustPKI = true
-
-		<Chan #tor>
-		</Chan>
-	</Network>
+	<Pass password>
+		Hash = {{ password_hash }}
+		Method = SHA256
+		Salt = {{ password_salt }}
+	</Pass>
 </User>

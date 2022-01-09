@@ -8,17 +8,19 @@ packer {
 }
 
 source "linode" "irc_bouncer" {
-  image         = var.image
-  instance_type = var.instance_type
-  linode_token  = var.linode_token
-  region        = var.region
-  ssh_username  = var.ssh_username
-  swap_size     = var.swap_size
+  image             = var.image
+  image_description = var.image_description
+  image_label       = var.image_label
+  instance_label    = var.image_label
+  instance_type     = var.instance_type
+  linode_token      = var.linode_token
+  region            = var.region
+  ssh_username      = var.ssh_username
+  swap_size         = var.swap_size
 }
 
 build {
   name = "irc_bouncer"
-
   sources = [
     "source.linode.irc_bouncer"
   ]
@@ -38,7 +40,9 @@ build {
       "ansible/user.yml",
       "ansible/packages.yml",
       "ansible/hardening.yml",
-      "ansible/znc.yml"
+      "ansible/znc.yml",
+      "ansible/tor.yml"
     ]
+    extra_arguments = ["--extra-vars", "\"control_pass=${var.control_pass}\""]
   }
 }

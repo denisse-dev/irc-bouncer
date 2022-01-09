@@ -31,7 +31,7 @@
       group: znc
       mode: 755
   - name: Ensure the ZNC configuration is in place
-    copy:
+    ansible.builtin.template:
       src: templates/znc.conf.j2
       dest: /var/lib/znc/.znc/configs/znc.conf
       owner: znc
@@ -102,10 +102,7 @@
       owner: root
       group: root
       mode: '0644'
-  - name: Ensure all daemons are reloaded
-    ansible.builtin.systemd:
-      daemon_reload: true
-  - name: Ensure the ZNC daemon is restared
+  - name: Ensure the ZNC daemon is reloaded and restared
     ansible.builtin.systemd:
       state: restarted
       daemon_reload: true

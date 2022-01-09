@@ -1,0 +1,17 @@
+AccountingMax 960 GBytes
+ContactInfo {{ tor_relay_contact_info }}
+ControlPort 9051
+DataDirectory /var/lib/tor
+#HashedControlPassword
+HiddenServiceDir /var/lib/tor/hidden_service/
+HiddenServicePort {{ ssh_port }} 127.0.0.1:{{ ssh_port }}
+HiddenServicePort {{ znc_port }} 127.0.0.1:{{ znc_port }}
+HiddenServiceAuthorizeClient stealth hidden_service
+Log notice syslog
+MapAddress 10.0.0.1 libera75jm6of4wxpxt4aynol3xjmbtxgfyjpu34ss4d7r7q2v5zrpyd.onion
+MapAddress 10.0.0.2 irc.oftc.net
+Nickname {{ tor_relay_nickname }}
+ORPort 9001
+RelayBandwidthBurst 35 MBytes
+RelayBandwidthRate 30 MBytes
+User tor

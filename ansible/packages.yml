@@ -10,6 +10,7 @@
         - emacs-nox
         - firewalld
         - libpam-google-authenticator
+        - nyx
         - proxychains-ng
         - qrencode
         - tmux
@@ -40,3 +41,4 @@
     ansible.builtin.systemd:
       name: tor
       enabled: true
+  - name: Ensure the Reflector configuration is in place

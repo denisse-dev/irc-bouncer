@@ -1,0 +1,46 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: false
+
+  vars_files:
+  - vars/ansible.json
+
+  tasks:
+  - name: Ensure the user belongs to the group tor
+    ansible.builtin.user:
+      name: "{{ user_name }}"
+      groups: tor
+      append: true
+  - name: Ensure the Tor configuration directory exists
+    ansible.builtin.file:
+      path: /etc/tor/
+      state: directory
+      mode: '0755'
+  - name: Ensure the Tor configuration is in place
+    ansible.builtin.template:
+      src: templates/torrc.j2
+      dest: /etc/tor/torrc
+      owner: znc
+      group: znc
+      mode: '0644'
+  - name: Ensure Tor's control password is hashed
+    ansible.builtin.shell: "tor --quiet --hash-password {{ control_pass }}"
+    register: control_pass_hash
+  - name: Ensure Tor's control password hash is stored
+    ansible.builtin.lineinfile:
+      path: /etc/tor/torrc
+      regexp: '^#HashedControlPassword'
+      line: "HashedControlPassword {{ control_pass_hash.stdout }}"
+  - name: Ensure the Tor daemon is reloaded and restared
+    ansible.builtin.systemd:
+      state: restarted
+      daemon_reload: true
+      name: tor
+  - name: Ensure Tor's hidden port is retrieved
+    ansible.builtin.shell:
+      cmd: cat /var/lib/tor/hidden_service/hostname
+    register: hidden_service
+  - name: Ensure Tor's hidden port is printed
+    ansible.builtin.debug:
+      var: hidden_service.stdout_lines
