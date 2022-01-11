@@ -7,8 +7,11 @@
       name:
         - emacs-nox
         - firewalld
+        - grafana
         - libpam-google-authenticator
         - nyx
+        - prometheus
+        - prometheus-node-exporter
         - proxychains-ng
         - qrencode
         - tmux
@@ -17,14 +20,33 @@
         - znc
         - znc-clientbuffer
       state: present
-  - name: Ensure the Reflector configuration is in place
+  - name: Ensure the reflector configuration is in place
     ansible.builtin.copy:
       src: files/reflector.conf
       dest: /etc/xdg/reflector/reflector.conf
       owner: root
       group: root
       mode: '0644'
-  - name: Ensure the Reflector service  is started and enabled
+  - name: Ensure the reflector service is started and enabled
     ansible.builtin.systemd:
       name: reflector
+      enabled: true
+  - name: Ensure the grafana service is started and enabled
+    ansible.builtin.systemd:
+      name: grafana
+      enabled: true
+  - name: Ensure the prometheus configuration is in place
+    ansible.builtin.copy:
+      src: files/prometheus.yml
+      dest: /etc/prometheus/prometheus.yml
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Ensure the prometheus service is started and endabled
+    ansible.builtin.systemd:
+      name: prometheus
+      enabled: true
+  - name: Ensure the prometheus prometheus-node-exporter service is started and enabled
+    ansible.builtin.systemd:
+      name: prometheus-node-exporter
       enabled: true

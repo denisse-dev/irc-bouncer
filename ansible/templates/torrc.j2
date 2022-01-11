@@ -4,7 +4,9 @@ ControlPort 9051
 DataDirectory /var/lib/tor
 #HashedControlPassword
 HiddenServiceDir /var/lib/tor/hidden_service/
-HiddenServicePort {{ ssh_port }} 127.0.0.1:{{ ssh_port }}
+HiddenServicePort {{ grafana_port }} 127.0.0.1:{{ grafana_port }}
+HiddenServicePort {{ prometheus_port }} 127.0.0.1:{{ prometheus_port}}
+HiddenServicePort {{ prometheus_node_exporter_port }} 127.0.0.1:{{ prometheus_node_exporter_port }}
 HiddenServicePort {{ znc_port }} 127.0.0.1:{{ znc_port }}
 HiddenServiceAuthorizeClient stealth hidden_service
 Log notice syslog

@@ -44,6 +44,12 @@ build {
       "ansible/znc.yml",
       "ansible/tor.yml"
     ]
-    extra_arguments = ["--extra-vars", "\"control_pass=${var.control_pass}\""]
+    extra_arguments = [
+      "--extra-vars",
+      "\"control_pass=${var.control_pass}\"",
+      "-vvv"
+    ]
+    galaxy_command = "ansible-galaxy collection install --requirements-file"
+    galaxy_file = "ansible/requirements.yml"
   }
 }

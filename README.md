@@ -207,3 +207,17 @@ Move to the ***status** buffer, then add the certificate:
 /disconnect -all
 /set irc.server.oftc-znc.username "<irc_user>@<client_name>/oftc"
 ```
+
+## Monitoring
+
+The following services are accessible from the Tor network:
+
+| Service                  | Port |
+| -----------              | ---- |
+| grafana                  | 3000 |
+| prometheus               | 9090 |
+| prometheus-node-exporter | 9100 |
+
+Access a service (ex. Grafana) using the Onion Adress and the port, ex (**owgtuxw3dd2m2cyii5nzxk6bohzggragerdvzdsev6uhjyb3cfn2u5yd.onion:3000/**):
+
+![ZNC dashboard](img/dashboard.png)
