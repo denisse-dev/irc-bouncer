@@ -26,7 +26,7 @@ variable "image_description" {
 }
 
 variable "image_label" {
-  default = "irc-bouncer"
+  default = "irc-bouncer-builder"
   type    = string
 }
 

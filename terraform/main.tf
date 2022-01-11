@@ -14,6 +14,7 @@ provider "linode" {
 
 resource "linode_instance" "irc_bouncer" {
   image            = var.image
+  label            = var.label
   region           = var.region
   swap_size        = var.swap_size
   type             = var.type

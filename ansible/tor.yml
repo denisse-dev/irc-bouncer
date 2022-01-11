@@ -32,9 +32,10 @@
       line: "HashedControlPassword {{ control_pass_hash.stdout }}"
   - name: Ensure the Tor daemon is reloaded and restared
     ansible.builtin.systemd:
-      state: restarted
       daemon_reload: true
+      enabled: true
       name: tor
+      state: started
   - name: Ensure Tor's hidden port is retrieved
     ansible.builtin.shell:
       cmd: cat /var/lib/tor/hidden_service/hostname

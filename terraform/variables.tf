@@ -9,6 +9,11 @@ variable "image" {
   description = "The OS image used to deploy the instance"
 }
 
+variable "label" {
+  type    = string
+  default = "irc-bouncer"
+}
+
 variable "region" {
   type        = string
   default     = "us-central"

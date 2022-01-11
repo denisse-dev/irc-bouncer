@@ -49,7 +49,7 @@
       var: znc_cert_fingerprint.stdout_lines
   - name: Ensure the LiberaChat network user certificate is created
     ansible.builtin.shell:
-      cmd: openssl req -nodes -newkey rsa:4096 -keyout user.pem -x509 -days 3650 -out user.pem -subj "/CN={{ liberachat_user }}"
+      cmd: openssl req -x509 -new -newkey rsa:4096 -sha256 -days 1096 -nodes -out user.pem -keyout user.pem -subj "/CN={{ liberachat_user }}"
     args:
       chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/liberachat/moddata/cert/
   - name: Ensure the OFTC network user certificate is created
@@ -59,7 +59,7 @@
       chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/oftc/moddata/cert/
   - name: Ensure the fingerprint for the user certificate is printed
     ansible.builtin.shell:
-      cmd: openssl x509 -sha1 -noout -fingerprint -in user.pem | sed -e 's/^.*=//;s/://g;y/ABCDEF/abcdef/'
+      cmd: openssl x509 -in user.pem -noout -fingerprint -sha512 | awk -F= '{gsub(":",""); print tolower ($2)}'
     args:
       chdir: /var/lib/znc/.znc/users/{{ znc_user }}/networks/liberachat/moddata/cert/
     register: liberachat_fingerprint

@@ -1,6 +1,6 @@
 # About
 
-This repository contains configuration to deploy a ZNC IRC bouncer via Terraform, Packer and Ansible to Linode.
+This repository contains Terraform, Packer, and Ansible configuration to deploy an Arch Linux Linode instance that hosts a ZNC IRC bouncer that uses Tor, an Onion service to access the bouncer webadmin and a Tor middle relay.
 
 # Pre requisites
 
@@ -10,7 +10,9 @@ This repository contains configuration to deploy a ZNC IRC bouncer via Terraform
   - [packer](https://archlinux.org/packages/community/x86_64/packer/)
   - [terraform](https://archlinux.org/packages/community/x86_64/terraform/)
 
-# Build image
+# Deploying the bouncer
+
+## Build image
 
 1. To export Packer variables:
 
@@ -50,7 +52,7 @@ The following variables are shown in STDOUT and are required for the next steps:
 
 </div>
 
-# Deploy image
+## Deploy image
 
 1. To export Terraform variables:
 
@@ -91,20 +93,117 @@ First login:
 
 </div>
 
-# Access ZNC's webadmin
+## Access ZNC's webadmin
 
-1. To get the Onion Service URL:
+- To get the Onion Service URL:
 
 ```bash
 cat /var/lib/tor/hidden_service/hostname
 ```
 
-2. To get ZNC's port
+- To get ZNC's port
 
 ```bash
 sed --quiet --expression '/Port/p' /var/lib/znc/.znc/configs/znc.conf
 ```
 
-3. Access ZNC's webadmin using the onion service and the port, (ex. `http://owgtuxw3dd2m2cyii5nzxk6bohzggragerdvzdsev6uhjyb3cfn2u5yd.onion:15763/`):
+Access ZNC's webadmin using the onion service and the port, (ex. `http://owgtuxw3dd2m2cyii5nzxk6bohzggragerdvzdsev6uhjyb3cfn2u5yd.onion:15763/`):
 
 ![Screenshot showing ZNC's user interface via an Onion Service](img/onion-service.png)
+
+# Connecting to the bouncer
+
+The following stpes are done in an IRC client like WeeChat.
+
+## Add SSL certificates for [SASL External](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer) authentication
+
+### Adding the LiberaChat network:
+
+1. To connect to LiberaChat directly:
+
+```bash
+/server add liberachat-direct irc.libera.chat/6697 -ssl
+/set irc.server.liberachat-direct.nicks <liberachat_nick>
+/save
+/connect liberachat-direct
+```
+
+2. To add the SSL certificate to LiberaChat:
+
+```bash
+/msg NickServ cert add <liberachat_fingerprint>
+```
+
+3. To connect to LiberaChat using ZNC:
+
+```bash
+/server add liberachat-znc <ip_address>/6697 -ssl -username=<znc_user>/liberachat -password=<znc_pass>
+/set irc.server.liberachat-znc.ssl_fingerprint <znc_cert_fingerprint>
+/save
+/connect liberachat-znc
+```
+
+3. To use SASL External:
+
+```bash
+/query *sasl Mechanism EXTERNAL
+```
+
+4. To accept LiberaChat's SSL fingerprint:
+
+Move to the ***status** buffer, then add the certificate:
+
+```bash
+/znc AddTrustedServerFingerprint <ssl_fingerprint>
+```
+
+5. To use clientbuffer:
+
+```bash
+/query *clientbuffer AddClient <client_name>
+/disconnect -all
+/set irc.server.liberachat-znc.username "<irc_user>@<client_name>/liberachat"
+```
+
+### Adding the OFTC network:
+
+1. To connect to OFTC:
+
+```bash
+/server add oftc-direct irc.oftc.net/6697 -ssl
+/set irc.server.oftc.nicks <liberachat_nick>
+/save
+/connect oftc-direct
+```
+
+2. To add the SSL certificate to OFTC:
+
+```bash
+/msg NickServ cert add <oftc_fingerprint>
+```
+
+3. To use SASL External:
+
+```bash
+/server add oftc-znc <ip_address> -ssl -username=<znc_user>/oftc -password=<znc_pass>
+/set irc.server.oftc-znc.ssl_fingerprint <znc_cert_fingerprint>
+/save
+/connect oftc-znc
+/query *sasl Mechanism EXTERNAL
+```
+
+4. To accept LiberaChat's SSL fingerprint:
+
+Move to the ***status** buffer, then add the certificate:
+
+```bash
+/znc AddTrustedServerFingerprint <ssl_fingerprint>
+```
+
+5. To use clientbuffer:
+
+```bash
+/query *clientbuffer AddClient <client_name>
+/disconnect -all
+/set irc.server.oftc-znc.username "<irc_user>@<client_name>/oftc"
+```
